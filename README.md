@@ -1,57 +1,45 @@
 # Project Name
 
-> One paragraph statement about the project.
+> 
 
 ![screenshot](./app_screenshot.png)
 
-Additional description about the project and its features.
 
 ## Built With
 
-- Major languages,
-- frameworks,
-- technologies used
+- Ruby
+- VSCode
 
 ## Live Demo
 
-[Live Demo Link](https://livedemo.com)
+[![Run on Repl.it](https://repl.it/badge/github/canriquez/enumerable)](https://repl.it/github/canriquez/enumerable)
 
 
 ## Getting Started
 
-**This is an example of how you may give instructions on setting up your project locally.**
-**Modify this file to match your project, remove sections that don't apply. For example: delete the testing section if the currect project doesn't require testing.**
+You can use the Repl.it link above to test the functionalities of the sorting method we created. 
 
 
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
-
-### Setup
-
-### Install
+    - You need to have ***Ruby*** installed on your machine ([Check this out](https://www.ruby-lang.org/en/documentation/installation/) for instructions on installing ruby)
 
 ### Usage
+    To run the code go to the local folder where you have the *Ruby file* and run in the terminal `$ ruby file.rb` being 'file' the one you want to run
 
 ### Run tests
+    - On the first method (`:bubble_sort`) you can change the given array where you call the method (just after the method definition).
+    - On the second one (`:bubble_sort_by`) you can change the words inside the array (remember to separate them with spaces).
 
-### Deployment
 
+## Author
 
+👤 **Carlos Anriquez**
 
-## Authors
-
-👤 **Author1**
-
-- Github: [@githubhandle](https://github.com/githubhandle)
-- Twitter: [@twitterhandle](https://twitter.com/twitterhandle)
-- Linkedin: [linkedin](https://linkedin.com/linkedinhandle)
-
-👤 **Author2**
-
-- Github: [@githubhandle](https://github.com/githubhandle)
-- Twitter: [@twitterhandle](https://twitter.com/twitterhandle)
-- Linkedin: [linkedin](https://linkedin.com/linkedinhandle)
+- Github: [@canriquez](https://github.com/canriquez)
+- Twitter: [@cranriquez](https://twitter.com/cranriquez)
+- Linkedin: [linkedin](https://www.linkedin.com/in/carlosanriquez/)
 
 ## 🤝 Contributing
 
@@ -65,10 +53,10 @@ Give a ⭐️ if you like this project!
 
 ## Acknowledgments
 
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc
+- Microverse
+- The Odin Project
+- The Corgis
 
 ## 📝 License
 
-This project is [MIT](lic.url) licensed.
+This project is [MIT](./license.md) licensed.
