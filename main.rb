@@ -16,7 +16,7 @@ module Enumerable
   # my_each_with_index method definition
   def my_each_with_index
     return to_enum :my_each unless block_given?
-    
+
     arr = self
     index = 0
     while index <= arr.length - 1
@@ -28,13 +28,16 @@ module Enumerable
 
   # my_select method definition
   def my_select
+    return to_enum :my_each unless block_given?
+
     arr = self
+    back = []
     index = 0
     while index <= arr.length - 1
-      yield arr[index], index
+      back << arr[index] if yield (arr[index])
       index += 1
     end
-    arr
+    back
   end
 end
 
@@ -66,4 +69,19 @@ puts [1, 2, 3].my_each_with_index
 puts ''
 print 'each_with_index no-block   : '
 puts [1, 2, 3].my_each_with_index
+puts ''
+
+puts '============== test 1: my_select =============='
+puts ''
+print 'my_select :'
+puts " #{[5, 6, 7, 8, 10, 11, 12].my_select { |x| (x + 1).even? }} "
+puts ''
+print 'select    :'
+puts " #{[5, 6, 7, 8, 10, 11, 12].select { |x| (x + 1).even? }} "
+puts ''
+print 'my_select no-block: '
+puts [1, 2, 3].my_select
+puts ''
+print 'select no-block   : '
+puts [1, 2, 3].select
 puts ''
