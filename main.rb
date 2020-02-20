@@ -85,28 +85,28 @@ module Enumerable
   end
 
   # my_none? method definition
-  def my_none?(param = "")
+  def my_none?(param = '')
     arr = self
     flase_block_elements = 0
     false_elements = 0
     false_regexp = 0
     false_pattern = 0
 
-    0.upto(arr.length - 1) do |i|  
-        if param == ""
-          if block_given?
-            flase_block_elements += 1 if !yield arr[i]
-          else 
-            false_elements += 1 if arr[i].nil? || arr[i] == false
-          end
-        elsif param.class == Regexp
-            false_regexp += 1 if param.match(arr[i]).nil?
-        else
-            false_pattern += 1 if arr[i] === param
-        end   
+    0.upto(arr.length - 1) do |i|
+      if param == ''
+        if block_given?
+          flase_block_elements += 1 unless yield arr[i]
+        elsif arr[i].nil? || arr[i] == false
+          false_elements += 1
+        end
+      elsif param.class == Regexp
+        false_regexp += 1 if param.match(arr[i]).nil?
+      elsif arr[i].class == param.class
+        false_pattern += 1
       end
+    end
 
-      flase_block_elements == arr.length || false_elements == arr.length || false_regexp == arr.length || false_pattern == arr.length
+    flase_block_elements == arr.length || false_elements == arr.length || false_regexp == arr.length || false_pattern == arr.length
   end
 end
 
