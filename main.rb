@@ -61,6 +61,28 @@ module Enumerable
     accum == arr.length
     # if we reach this step and all elements are thruty, we exit true.
   end
+
+  # my_any? method definition
+  def my_any?
+    arr = self
+    accum = 0
+
+    0.upto(arr.length - 1) do |i|
+      return true if (!arr[i].nil? || arr[i] != false) && !block_given?
+
+      # exits with true if any element falsy and no block is present
+      # we count truthy for element unless there is no block present
+      if block_given?
+        accum += 1 if yield arr[i]
+      end
+    end
+
+    accum >= 1
+    # we reach here only if: Or elements are thruthy with block present.
+    # Or, there is no block and all elements are truthy
+    # if we reach this step and at least one element is true, we exit true.
+    # otherwise we will return false as there is no block condition met -
+  end
 end
 
 puts '============== test 1: my_each =============='
@@ -122,4 +144,20 @@ puts testarr.my_all?
 puts ''
 print "#{testarr}.all? <no-block>   : "
 puts testarr.all?
+puts ''
+
+puts '============== test 1: my_any =============='
+puts ''
+testarr = [2, 10, 51]
+print "#{testarr}.my_any? { |x| x > 50 } :"
+puts " #{testarr.my_any? { |x| x > 50 }} "
+puts ''
+print "#{testarr}.any? { |x| x > 50 }   :"
+puts " #{testarr.any? { |x| x > 50 }} "
+puts ''
+print "#{testarr}.my_any? <no-block>: "
+puts testarr.my_any?
+puts ''
+print "#{testarr}.any? <no-block>   : "
+puts testarr.any?
 puts ''
