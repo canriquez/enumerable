@@ -40,24 +40,26 @@ module Enumerable
     back
   end
 
-  # my_select method definition
+  # my_all? method definition
   def my_all?
     arr = self
-    nilfalse = true
     accum = 0
 
     0.upto(arr.length - 1) do |i|
-      nilfalse = false unless arr[i].nil? || arr[i] == false
-      # exits with nilfalse=true if any element is false or nil regardless if block is given or not
+      return false if arr[i].nil? || arr[i] == false
+
+      # exits if any element is false or nil regardless if block is given or not
+      # we count truthy for element unless there is no block present
+      if block_given?
+        accum += 1 if yield arr[i]
+      end
     end
 
-    return false if (!block_given? && nilfalse) || nilfalse
-    return true if !block_given? && !nilfalse
+    return true unless block_given?
 
-    # return false if nilfalse
-
-    arr.my_each { |x| accum += 1 if yield x }
+    # we return true if no block present but we finish the first loop successfuly (so no nil or false)
     accum == arr.length
+    # if we reach this step and all elements are thruty, we exit true.
   end
 end
 
@@ -108,12 +110,12 @@ puts ''
 
 puts '============== test 1: my_all =============='
 puts ''
-testarr = [2, 0, 99]
+testarr = [2, 10, 99]
 print "#{testarr}.my_all? { |x| x > 1 } :"
 puts " #{testarr.my_all? { |x| x >= 1 }} "
 puts ''
 print "#{testarr}.all? { |x| x > 1 }   :"
-puts " #{testarr.my_all? { |x| x >= 1 }} "
+puts " #{testarr.all? { |x| x >= 1 }} "
 puts ''
 print "#{testarr}.my_all? <no-block>: "
 puts testarr.my_all?
