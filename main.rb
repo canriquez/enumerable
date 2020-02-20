@@ -41,7 +41,7 @@ module Enumerable
   end
 
   # my_all? method definition
-  def my_all?
+  def my_all?(param = '')
     arr = self
     accum = 0
 
@@ -84,6 +84,25 @@ module Enumerable
     # otherwise we will return false as there is no block condition met -
   end
 
+  def param_reg(par, arr_i, f_reg, f_patt)
+    # method used inside my_none
+    return unless par != ''
+
+    if par.class == Regexp && par.match(arr_i).nil?
+      f_reg += 1
+    elsif arr_i.class == par.class
+      f_patt += 1
+    end
+    [f_reg, f_patt]
+  end
+
+  def any_element_true(arrlen, fbe, fel, freg, fpa)
+    # method used inside my_none
+    a = fbe == arrlen || fel == arrlen
+    b = freg == arrlen || fpa == arrlen
+    a || b
+  end
+
   # my_none? method definition
   def my_none?(param = '')
     arr = self
@@ -99,14 +118,11 @@ module Enumerable
         elsif arr[i].nil? || arr[i] == false
           false_elements += 1
         end
-      elsif param.class == Regexp
-        false_regexp += 1 if param.match(arr[i]).nil?
-      elsif arr[i].class == param.class
-        false_pattern += 1
       end
-    end
 
-    flase_block_elements == arr.length || false_elements == arr.length || false_regexp == arr.length || false_pattern == arr.length
+      false_regexp, false_pattern = param_reg(param, arr[i], false_regexp, false_pattern)
+    end
+    any_element_true(arr.length, flase_block_elements, false_elements, false_regexp, false_pattern)
   end
 end
 
@@ -237,5 +253,45 @@ print '[nil,false,true].none?        #==>: '
 p [nil, false, true].none?
 print '[nil,false,true].my_none?     #==>: '
 p [nil, false, true].my_none?
+
+puts '==============  my_all_full =============='
+
+puts 'my_all_full: Test 1'
+print '%w[ant bear cat].all? { |word| word.length >= 3 }    #==>: '
+p %w[ant bear cat].all? { |word| word.length >= 3 }
+
+print '%w[ant bear cat].my_all? { |word| word.length >= 3 } #==>: '
+p %w[ant bear cat].my_all? { |word| word.length >= 3 }
+
+puts 'my_all_full: Test 2'
+print '%w[ant bear cat].all? { |word| word.length >= 4 }    #==>: '
+p %w[ant bear cat].all? { |word| word.length >= 4 }
+
+print '%w[ant bear cat].my_all? { |word| word.length >= 4 } #==>: '
+p %w[ant bear cat].my_all? { |word| word.length >= 4 }
+
+puts 'my_all_full: Test 3'
+print '%w[ant bear cat].all?(/t/)    #==>: '
+p %w[ant bear cat].all?(/a/)
+print '%w[ant bear cat].my_all?(/t/) #==>: '
+p %w[ant bear cat].my_all?(/a/) { |word| word.length >= 4 }
+
+puts 'my_all_full: Test 4'
+print '[1, "b", 3.14].all?(Numeric)     #==>: '
+p [1, 'b', 3.14].all?(Numeric)
+print '[1, "b", 3.14].my_all?(Numeric)  #==>: '
+p [1, 'b', 3.14].my_all?(Numeric)
+
+puts 'my_all_full: Test 5'
+print '[nil, true, 99].all?        #==>: '
+p [nil, true, 99].all?
+print '[nil, true, 99].my_all?     #==>: '
+p [nil, true, 99].my_all?
+
+puts 'my_all_full: Test 6'
+print '[].all?        #==>: '
+p [].all?
+print '[].my_all?     #==>: '
+p [].my_all?
 
 # rubocop:enable Lint/AmbiguousBlockAssociation
