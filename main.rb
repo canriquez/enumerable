@@ -83,6 +83,36 @@ module Enumerable
     # if we reach this step and at least one element is true, we exit true.
     # otherwise we will return false as there is no block condition met -
   end
+
+  # my_none? method definition
+  def my_none?(param = "")
+    arr = self
+    flase_block_elements = 0
+    false_elements = 0
+    false_regexp = 0
+    false_pattern = 0
+
+    0.upto(arr.length - 1) do |i|  
+        if param == ""
+          if block_given?
+            flase_block_elements += 1 if !yield arr[i]
+          else 
+            false_elements += 1 if arr[i].nil? || arr[i] == false
+          end
+        elsif param.class == Regexp
+            false_regexp += 1 if param.match(arr[i]).nil?
+        else
+            false_pattern += 1 if arr[i] === param
+        end   
+      end
+
+      flase_block_elements == arr.length || false_elements == arr.length || false_regexp == arr.length || false_pattern == arr.length
+      # if we reach this step and all elements are thruty, we exit true.
+
+      # this code will return true if variable contains a pattern  !var.match(var.to_s).nil?
+      # source: https://docs.ruby-lang.org/en/master/Regexp.html
+      # other form: var.class == Regexp
+  end
 end
 
 puts '============== test 1: my_each =============='
@@ -161,3 +191,53 @@ puts ''
 print "#{testarr}.any? <no-block>   : "
 puts testarr.any?
 puts ''
+
+puts '==============  my_none =============='
+puts 'my_none: Test 1'
+print '%w[ant bear cat].none?    { |word| word.length == 5 } #==>: '
+p %w[ant bear cat].none? { |word| word.length == 5 }
+
+print '%w[ant bear cat].my_none? { |word| word.length == 5 } #==>: '
+p %w[ant bear cat].my_none? { |word| word.length == 5 }
+
+puts 'my_none: Test 2'
+print '%w[ant bear cat].none?    { |word| word.length >= 4 } #==>: ' 
+p %w[ant bear cat].none? { |word| word.length >= 4 }
+print '%w[ant bear cat].my_none? { |word| word.length >= 4 } #==>: '
+p %w[ant bear cat].my_none? { |word| word.length >= 4 }
+
+puts 'my_none: Test 3'
+print '%w[ant bear cat].none?(/d/)     #==>: '
+p %w[ant bear cat].none?(/d/)
+print '%w[ant bear cat].my_none?(/d/)  #==>: '
+p %w[ant bear cat].my_none?(/d/)
+
+puts 'my_none: Test 4'
+print '[1, 3.14, 42].none?(Float)        #==>: '
+p [1, 3.14, 42].none?(Float)
+print '[1, 3.14, 42].my_none?(Float)     #==>: '
+p [1, 3.14, 42].my_none?(Float)
+
+puts 'my_none: Test 5'
+print '[].none?        #==>: '
+p [].none?
+print '[].my_none?     #==>: '
+p [].my_none?
+
+puts 'my_none: Test 6'
+print '[nil].none?        #==>: '
+p [nil].none?
+print '[nil].my_none?     #==>: '
+p [nil].my_none?
+
+puts 'my_none: Test 7'
+print '[nil,false].none?        #==>: '
+p [nil, false].none?
+print '[nil,false].my_none?     #==>: '
+p [nil, false].my_none?
+
+puts 'my_none: Test 8'
+print '[nil,false,true].none?        #==>: '
+p [nil, false, true].none?
+print '[nil,false,true].my_none?     #==>: '
+p [nil, false, true].my_none?
