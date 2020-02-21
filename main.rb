@@ -41,11 +41,11 @@ module Enumerable
   def param_reg(par, arr_i, t_reg, t_patt, who)
     # who is false for my_all method call
     # who is true for my_none method call
-    return unless par != ''
+    return [t_reg, t_patt] unless par != ''
+
     if par.class == Regexp && (!par.match(arr_i).nil? ^ who)
       t_reg += 1
-    elsif arr_i === par
-      puts "adding pattern .."
+    elsif par.class != Regexp && arr_i.is_a?(Module.const_get(par.to_s))
       t_patt += 1
     end
     [t_reg, t_patt]
@@ -74,23 +74,26 @@ module Enumerable
     # if we reach this step and all elements are thruty, we exit true.
   end
 
+  def no_block_count(element_check, block, arr_i)
+    element_check += 1 if (!arr_i.nil? || arr_i != false) && !block
+    element_check
+  end
+
   # my_any? method definition
-  def my_any?(param='')
+  def my_any?(param = String)
     arr = self
-    any_matrix = {true_block_elements:0,true_elements:0,true_regexp:0,true_pattern:0, who: false}
+    any_h = { true_block_elements: 0, true_elements: 0, t_rxp: 0, true_pattern: 0, who: false }
 
     0.upto(arr.length - 1) do |i|
       if block_given?
-        any_matrix[:true_block_elements] += 1 if yield arr[i]
+        any_h[:true_block_elements] += 1 if yield arr[i]
       end
-      any_matrix[:true_regexp], any_matrix[:true_pattern] = param_reg(param, arr[i], any_matrix[:true_regexp], any_matrix[:true_pattern], false)
-      # puts "block : #{block_given?}. matrix : #{any_matrix}"
-      return true if (!arr[i].nil? || arr[i] != false) && !block_given? && param.class != Regexp
+      any_h[:true_block_elements] = no_block_count(any_h[:true_block_elements], block_given?, arr[i])
+      any_h[:t_rxp], any_h[:true_pattern] = param_reg(param, arr[i], any_h[:t_rxp], any_h[:true_pattern], false)
+      # return true if (!arr[i].nil? || arr[i] != false) && !block_given?
+      # puts "matrix #{any_h}"
     end
-    # return true if any_matrix[:true_regexp] == 1
-    # return true if any_matrix[:true_pattern] == 1
-    any_matrix[:true_block_elements] >= 1 || any_matrix[:true_regexp] == 1 || any_matrix[:true_pattern] == 1
-  
+    any_h[:true_block_elements] >= 1 || any_h[:t_rxp] >= 1 || any_h[:true_pattern] >= 1
   end
 
   def any_element_true(arrlen, fbe, fel, freg, fpa)
