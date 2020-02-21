@@ -158,6 +158,16 @@ module Enumerable
     end
     back
   end
+
+  # my_inject method definition
+  def my_inject(param = '')
+    caller = self
+    total = 0
+    caller.my_each do |value|
+
+    end
+    back
+  end
 end
 
 puts '============== test 1: my_each =============='
@@ -409,9 +419,9 @@ p [1, 2, 3, 4].my_count(2)
 
 puts 'my_any_full: Test 3'
 print '[1, 2, 3, 4].count { |x| (x % 2).zero }    #==>: '
-p [1, 2, 3, 4].count { |x| (x % 2).zero }
+p [1, 2, 3, 4].count { |x| (x % 2).zero? }
 print '[1, 2, 3, 4].my_count { |x| (x % 2).zero } #==>: '
-p [1, 2, 3, 4].my_count { |x| (x % 2).zero }
+p [1, 2, 3, 4].my_count { |x| (x % 2).zero? }
 
 # rubocop:enable Lint/AmbiguousBlockAssociation
 # rubocop:enable Lint/ParenthesesAsGroupedExpression
