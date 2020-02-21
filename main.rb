@@ -164,7 +164,6 @@ module Enumerable
     caller = self
     total = 0
     caller.my_each do |value|
-
     end
     back
   end
