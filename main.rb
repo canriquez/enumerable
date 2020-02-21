@@ -38,11 +38,12 @@ module Enumerable
     back
   end
 
-  def param_reg_myall(par, arr_i, t_reg, t_patt)
-    # method used inside my_none
+  def param_reg(par, arr_i, t_reg, t_patt, who)
+    # who is false for my_all method call
+    # who is true for my_none method call
     return unless par != ''
 
-    if par.class == Regexp && !par.match(arr_i).nil?
+    if par.class == Regexp && (!par.match(arr_i).nil? ^ who)
       t_reg += 1
     elsif arr_i.class == par.class
       t_patt += 1
@@ -66,7 +67,7 @@ module Enumerable
           true_elements += 1
         end
       end
-      true_regexp, true_pattern = param_reg_myall(param, arr[i], true_regexp, true_pattern)
+      true_regexp, true_pattern = param_reg(param, arr[i], true_regexp, true_pattern, false)
     end
     any_element_true(arr.length, true_block_elements, true_elements, true_regexp, true_pattern)
 
@@ -87,18 +88,6 @@ module Enumerable
     end
 
     accum >= 1
-  end
-
-  def param_reg(par, arr_i, f_reg, f_patt)
-    # method used inside my_none
-    return unless par != ''
-
-    if par.class == Regexp && par.match(arr_i).nil?
-      f_reg += 1
-    elsif arr_i.class == par.class
-      f_patt += 1
-    end
-    [f_reg, f_patt]
   end
 
   def any_element_true(arrlen, fbe, fel, freg, fpa)
@@ -125,7 +114,7 @@ module Enumerable
         end
       end
 
-      false_regexp, false_pattern = param_reg(param, arr[i], false_regexp, false_pattern)
+      false_regexp, false_pattern = param_reg(param, arr[i], false_regexp, false_pattern, true)
     end
     any_element_true(arr.length, flase_block_elements, false_elements, false_regexp, false_pattern)
   end
