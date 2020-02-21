@@ -5,8 +5,14 @@ module Enumerable
     return to_enum :my_each unless block_given?
 
     arr = self
-    0.upto(arr.length - 1) do |index|
-      yield (arr[index])
+    if arr.is_a? Array
+      0.upto(arr.length - 1) do |index|
+        yield (arr[index])
+      end
+    elsif arr.is_a? Range
+      arr.step(1) do |value|
+        yield value
+      end
     end
     arr
   end
@@ -124,6 +130,18 @@ module Enumerable
     end
     any_element_true(arr.length, flase_block_elements, false_elements, false_regexp, false_pattern)
   end
+
+  # my_map method definition
+  def my_map
+    caller = self
+    return to_enum :my_map unless block_given?
+
+    back = []
+    caller.my_each do |value|
+      back.push(yield value)
+    end
+    back
+  end
 end
 
 puts '============== test 1: my_each =============='
@@ -205,6 +223,7 @@ puts ''
 
 puts '==============  my_none =============='
 # rubocop:disable Lint/AmbiguousBlockAssociation
+# rubocop:disable Lint/ParenthesesAsGroupedExpression
 puts 'my_none: Test 1'
 print '%w[ant bear cat].none?    { |word| word.length == 5 } #==>: '
 p %w[ant bear cat].none? { |word| word.length == 5 }
@@ -334,4 +353,28 @@ p [].any?
 print '[].my_any?     #==>: '
 p [].my_any?
 
+puts '==============  my_map =============='
+
+puts 'my_map: Test 1'
+print '(1..4).map { |i| i * i }    #==>: '
+p (1..4).map { |i| i * i }
+
+print '(1..4).my_map { |i| i * i } #==>: '
+p (1..4).my_map { |i| i * i }
+
+puts 'my_map: Test 2'
+print '[4, 6, 7, 9].map { |x| x / 2 > 3  }    #==>: '
+p [4, 6, 7, 9].map { |x| x / 2 > 3 }
+
+print '[4, 6, 7, 9].my_map { |x| x / 2 > 3 } #==>: '
+p [4, 6, 7, 9].my_map { |x| x / 2 > 3 }
+
+puts 'my_map: Test 3'
+print '[4, 6, 7, 9].map    #==>: '
+p [4, 6, 7, 9].map
+
+print '[4, 6, 7, 9].my_map #==>: '
+p [4, 6, 7, 9].my_map
+
 # rubocop:enable Lint/AmbiguousBlockAssociation
+# rubocop:enable Lint/ParenthesesAsGroupedExpression
