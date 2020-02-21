@@ -77,17 +77,18 @@ module Enumerable
   # my_any? method definition
   def my_any?(param='')
     arr = self
-    accum = 0
+    any_matrix = {true_block_elements:0,true_elements:0,true_regexp:0,true_pattern:0, who: true}
 
     0.upto(arr.length - 1) do |i|
       return true if (!arr[i].nil? || arr[i] != false) && !block_given?
 
       if block_given?
-        accum += 1 if yield arr[i]
+        any_matrix[:true_block_elements] += 1 if yield arr[i]
       end
     end
 
-    accum >= 1
+
+    any_matrix[:true_block_elements] >= 1
   end
 
   def any_element_true(arrlen, fbe, fel, freg, fpa)
