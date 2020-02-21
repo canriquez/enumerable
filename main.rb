@@ -142,6 +142,22 @@ module Enumerable
     end
     back
   end
+
+  # my_map method definition
+  def my_count(param = '')
+    caller = self
+    back = 0
+    caller.my_each do |value|
+      if block_given?
+        back += 1 if yield value
+      elsif param != '' && !block_given?
+        back += 1 if value == param
+      else
+        back += 1
+      end
+    end
+    back
+  end
 end
 
 puts '============== test 1: my_each =============='
@@ -375,6 +391,27 @@ p [4, 6, 7, 9].map
 
 print '[4, 6, 7, 9].my_map #==>: '
 p [4, 6, 7, 9].my_map
+
+puts '==============  my_count =============='
+puts 'my_any_full: Test 1'
+print '[1, 2, 3, 4].count    #==>: '
+p [1, 2, 3, 4].count
+
+print '[1, 2, 3, 4].my_count #==>: '
+p [1, 2, 3, 4].my_count
+
+puts 'my_any_full: Test 2'
+print '[1, 2, 3, 4].count(2)     #==>: '
+p [1, 2, 3, 4].count(2)
+
+print '[1, 2, 3, 4].my_count(2)  #==>: '
+p [1, 2, 3, 4].my_count(2)
+
+puts 'my_any_full: Test 3'
+print '[1, 2, 3, 4].count { |x| (x % 2).zero }    #==>: '
+p [1, 2, 3, 4].count { |x| (x % 2).zero }
+print '[1, 2, 3, 4].my_count { |x| (x % 2).zero } #==>: '
+p [1, 2, 3, 4].my_count { |x| (x % 2).zero }
 
 # rubocop:enable Lint/AmbiguousBlockAssociation
 # rubocop:enable Lint/ParenthesesAsGroupedExpression
