@@ -41,11 +41,12 @@ module Enumerable
   def param_reg(par, arr_i, t_reg, t_patt, who)
     # who is false for my_all method call
     # who is true for my_none method call
+    # puts "Parameter = #{par.class}, Regex&Match-to-count?: #{par.class == Regexp && (!par.match(arr_i).nil? ^ who)}"
     return unless par != ''
-
     if par.class == Regexp && (!par.match(arr_i).nil? ^ who)
       t_reg += 1
-    elsif arr_i.class == par.class
+    elsif arr_i === par
+      puts "adding pattern .."
       t_patt += 1
     end
     [t_reg, t_patt]
@@ -77,17 +78,18 @@ module Enumerable
   # my_any? method definition
   def my_any?(param='')
     arr = self
-    any_matrix = {true_block_elements:0,true_elements:0,true_regexp:0,true_pattern:0, who: true}
+    any_matrix = {true_block_elements:0,true_elements:0,true_regexp:0,true_pattern:0, who: false}
 
     0.upto(arr.length - 1) do |i|
-      return true if (!arr[i].nil? || arr[i] != false) && !block_given?
-
       if block_given?
         any_matrix[:true_block_elements] += 1 if yield arr[i]
       end
+      any_matrix[:true_regexp], any_matrix[:true_pattern] = param_reg(param, arr[i], any_matrix[:true_regexp], any_matrix[:true_pattern], false)
+      # puts "block : #{block_given?}. matrix : #{any_matrix}"
+      return true if (!arr[i].nil? || arr[i] != false) && !block_given? && param.class != Regexp
     end
-
-
+    # return true if any_matrix[:true_regexp] == 1
+    # return true if any_matrix[:true_pattern] == 1
     any_matrix[:true_block_elements] >= 1
   end
 
@@ -306,10 +308,10 @@ print '%w[ant bear cat].my_any? { |word| word.length >= 4 } #==>: '
 p %w[ant bear cat].my_any? { |word| word.length >= 4 }
 
 puts 'my_any_full: Test 3'
-print '%w[ant bear cat].any?(/t/)    #==>: '
+print '%w[ant bear cat].any?(/d/)    #==>: '
 p %w[ant bear cat].any?(/d/)
-print '%w[ant bear cat].my_any?(/t/) #==>: '
-p %w[ant bear cat].my_any?(/d/) { |word| word.length >= 4 }
+print '%w[ant bear cat].my_any?(/d/) #==>: '
+p %w[ant bear cat].my_any?(/d/)
 
 puts 'my_any_full: Test 4'
 print '[1, "b", 3.14].any?(Numeric)     #==>: '
