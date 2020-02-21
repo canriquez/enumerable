@@ -75,7 +75,7 @@ module Enumerable
   end
 
   # my_any? method definition
-  def my_any?
+  def my_any?(param='')
     arr = self
     accum = 0
 
@@ -287,5 +287,45 @@ print '[].all?        #==>: '
 p [].all?
 print '[].my_all?     #==>: '
 p [].my_all?
+
+puts '==============  my_any_full =============='
+
+puts 'my_any_full: Test 1'
+print '%w[ant bear cat].any? { |word| word.length >= 3 }    #==>: '
+p %w[ant bear cat].any? { |word| word.length >= 3 }
+
+print '%w[ant bear cat].my_any? { |word| word.length >= 3 } #==>: '
+p %w[ant bear cat].my_any? { |word| word.length >= 3 }
+
+puts 'my_any_full: Test 2'
+print '%w[ant bear cat].any? { |word| word.length >= 4 }    #==>: '
+p %w[ant bear cat].any? { |word| word.length >= 4 }
+
+print '%w[ant bear cat].my_any? { |word| word.length >= 4 } #==>: '
+p %w[ant bear cat].my_any? { |word| word.length >= 4 }
+
+puts 'my_any_full: Test 3'
+print '%w[ant bear cat].any?(/t/)    #==>: '
+p %w[ant bear cat].any?(/d/)
+print '%w[ant bear cat].my_any?(/t/) #==>: '
+p %w[ant bear cat].my_any?(/d/) { |word| word.length >= 4 }
+
+puts 'my_any_full: Test 4'
+print '[1, "b", 3.14].any?(Numeric)     #==>: '
+p [1, 'b', 3.14].any?(Numeric)
+print '[1, "b", 3.14].my_any?(Numeric)  #==>: '
+p [1, 'b', 3.14].my_any?(Numeric)
+
+puts 'my_any_full: Test 5'
+print '[nil, true, 99].any?        #==>: '
+p [nil, true, 99].any?
+print '[nil, true, 99].my_any?     #==>: '
+p [nil, true, 99].my_any?
+
+puts 'my_any_full: Test 6'
+print '[].any?        #==>: '
+p [].any?
+print '[].my_any?     #==>: '
+p [].my_any?
 
 # rubocop:enable Lint/AmbiguousBlockAssociation
