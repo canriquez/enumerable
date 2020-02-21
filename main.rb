@@ -5,10 +5,8 @@ module Enumerable
     return to_enum :my_each unless block_given?
 
     arr = self
-    index = 0
-    while index <= arr.length - 1
+    0.upto(arr.length - 1) do |index|
       yield (arr[index])
-      index += 1
     end
     arr
   end
@@ -40,58 +38,38 @@ module Enumerable
     back
   end
 
-  # my_all? method definition
-  def my_all?(param = '')
-    arr = self
-    accum = 0
+  def param_reg_myall(par, arr_i, t_reg, t_patt)
+    # method used inside my_none
+    return unless par != ''
 
-    0.upto(arr.length - 1) do |i|
-      return false if arr[i].nil? || arr[i] == false
-
-      # exits if any element is false or nil regardless if block is given or not
-      # we count truthy for element unless there is no block present
-      if block_given?
-        accum += 1 if yield arr[i]
-      end
+    if par.class == Regexp && !par.match(arr_i).nil?
+      t_reg += 1
+    elsif arr_i.class == par.class
+      t_patt += 1
     end
-
-    return true unless block_given?
-
-    # we return true if no block present but we finish the first loop successfuly (so no nil or false)
-    accum == arr.length
-    # if we reach this step and all elements are thruty, we exit true.
+    [t_reg, t_patt]
   end
 
   # my_all? method definition
-  def my_all_new?(param = '')
+  def my_all?(param = '')
     arr = self
-    accum = 0
     true_block_elements = 0
     true_elements = 0
     true_regexp = 0
     true_pattern = 0
 
     0.upto(arr.length - 1) do |i|
-      if param = ''
-        return false if arr[i].nil? || arr[i] == false
-
-      # exits if any element is false or nil regardless if block is given or not
-      # we count truthy for element unless there is no block present
+      if param == ''
         if block_given?
           true_block_elements += 1 if yield arr[i]
         elsif !arr[i].nil? && arr[i] != false
           true_elements += 1
         end
       end
-
-      true_regexp, true_pattern = param_reg(param, arr[i], true_regexp, true_pattern, :myall)
-
+      true_regexp, true_pattern = param_reg_myall(param, arr[i], true_regexp, true_pattern)
     end
+    any_element_true(arr.length, true_block_elements, true_elements, true_regexp, true_pattern)
 
-    return true unless block_given?
-
-    # we return true if no block present but we finish the first loop successfuly (so no nil or false)
-    accum == arr.length
     # if we reach this step and all elements are thruty, we exit true.
   end
 
@@ -103,23 +81,18 @@ module Enumerable
     0.upto(arr.length - 1) do |i|
       return true if (!arr[i].nil? || arr[i] != false) && !block_given?
 
-      # exits with true if any element falsy and no block is present
-      # we count truthy for element unless there is no block present
       if block_given?
         accum += 1 if yield arr[i]
       end
     end
 
     accum >= 1
-    # we reach here only if: Or elements are thruthy with block present.
-    # Or, there is no block and all elements are truthy
-    # if we reach this step and at least one element is true, we exit true.
-    # otherwise we will return false as there is no block condition met -
   end
 
   def param_reg(par, arr_i, f_reg, f_patt)
     # method used inside my_none
     return unless par != ''
+
     if par.class == Regexp && par.match(arr_i).nil?
       f_reg += 1
     elsif arr_i.class == par.class
