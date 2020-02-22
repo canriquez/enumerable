@@ -159,13 +159,27 @@ module Enumerable
     back
   end
 
+  def conditions(con1, con2, con3)
+    con1 && con2 && con3
+  end
+
   # my_inject method definition
-  def my_inject(param = '')
+  def my_inject(*param)
     caller = self
-    total = 0
+    i = 0
+    total = []
     caller.my_each do |value|
+      if conditions(i.zero?, !param.nil?, param[0].is_a?(Numeric))
+        total[0] = param[0]
+      elsif conditions(i.zero?, block_given?, value.is_a?(Numeric))
+        total[0] = value - value
+      elsif conditions(i.zero?, block_given?, !value.is_a?(Numeric))
+        total[0] = value.clear
+      end
+      total[i + 1] = yield total[i], value
+      i += 1
     end
-    back
+    total[i]
   end
 end
 
@@ -421,6 +435,27 @@ print '[1, 2, 3, 4].count { |x| (x % 2).zero }    #==>: '
 p [1, 2, 3, 4].count { |x| (x % 2).zero? }
 print '[1, 2, 3, 4].my_count { |x| (x % 2).zero } #==>: '
 p [1, 2, 3, 4].my_count { |x| (x % 2).zero? }
+
+puts '==============  my_inject =============='
+puts 'my_any_full: Test 1'
+print 'p (5..10).inject { |sum, n| sum + n }    #==>: '
+p (5..10).inject { |sum, n| sum + n }
+
+print 'p (5..10).my_inject { |sum, n| sum + n } #==>: '
+p (5..10).my_inject { |sum, n| sum + n }
+
+puts 'my_any_full: Test 2'
+print 'p (5..10).inject(1) { |product, n| product * n }     #==>: '
+p (5..10).inject(1) { |product, n| product * n }
+
+print 'p (5..10).my_inject(1) { |product, n| product * n }  #==>: '
+p (5..10).my_inject(1) { |product, n| product * n }
+
+puts 'my_any_full: Test 3'
+print 'p %w{ cat sheep bear }.inject { |memo, word| memo.length > word.length ? memo : word }     #==>: '
+p %w[cat sheep bear].inject { |memo, word| memo.length > word.length ? memo : word }
+print 'p %w{ cat sheep bear }.my_inject { |memo, word| memo.length > word.length ? memo : word }  #==>: '
+p %w[cat sheep bear].my_inject { |memo, word| memo.length > word.length ? memo : word }
 
 # rubocop:enable Lint/AmbiguousBlockAssociation
 # rubocop:enable Lint/ParenthesesAsGroupedExpression
