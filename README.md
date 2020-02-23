@@ -1,19 +1,20 @@
 # Advanced Building Blocks - Enumerables
 
-> In this project, the requirement is to implement my own version of Ruby’s enumerable methods. 
+> This project adds my own version of enumerable methods onto the existing Enumerable module. In this project, I considered the full method definition included in [https://devdocs.io/ruby~2.6/enumerable](https://devdocs.io/ruby~2.6/enumerable), to replicate the same behaviour in all defined possible conditions.
+
 Implemented methods are as follow:
-- 1. #my_each
-- 2. #my_each_with_index
-- 3. #my_select
-- 4. #my_all?
-- 5. #my_any?
-- 6. #my_none?
-- 7. #my_count
-- 8. #my_map
-- 9. #my_inject
-- 10.#my_inject: Using #my_inject to build #multiply_els method
-- 11.#my_map method, modification to take procs
-- 12.#my_map refactoring so it takes procs and blocks
+- #my_each
+- #my_each_with_index
+- #my_select
+- #my_all?
+- #my_any?
+- #my_none?
+- #my_count
+- #my_map
+- #my_inject
+- #my_inject: Using #my_inject to build #multiply_els method
+- #my_map method, modification to take procs
+- #my_map refactoring so it takes procs and blocks
 Each method is tested within the same code, after module definition.
 
 
@@ -32,7 +33,7 @@ Each method is tested within the same code, after module definition.
 
 ## Getting Started
 
-You can use the Repl.it link above to test the functionalities of the sorting method we created. 
+You can use the Repl.it link above to test to run the code and see all tests results included.
 
 
 To get a local copy up and running follow these simple example steps.
