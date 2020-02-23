@@ -15,6 +15,7 @@ Implemented methods are as follow:
 - #my_inject: Using #my_inject to build #multiply_els method
 - #my_map method, modification to take procs
 - #my_map refactoring so it takes procs and blocks
+
 Each method is tested within the same code, after module definition.
 
 
