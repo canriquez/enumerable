@@ -179,8 +179,12 @@ module Enumerable
       total[i + 1] = yield total[i], value
       i += 1
     end
-    total[i]
+    total[-1]
   end
+end
+
+def multiply_els(arr)
+  arr.my_inject(1) { |product, x| x * product }
 end
 
 puts '============== test 1: my_each =============='
@@ -456,6 +460,11 @@ print 'p %w{ cat sheep bear }.inject { |memo, word| memo.length > word.length ? 
 p %w[cat sheep bear].inject { |memo, word| memo.length > word.length ? memo : word }
 print 'p %w{ cat sheep bear }.my_inject { |memo, word| memo.length > word.length ? memo : word }  #==>: '
 p %w[cat sheep bear].my_inject { |memo, word| memo.length > word.length ? memo : word }
+
+puts '==============  POINT 10 - multiply_else =============='
+puts 'mutilply_els using my_inject: Test 1'
+print 'p multiply_els([2, 4, 5])  #==>: '
+p multiply_els([2, 4, 5])
 
 # rubocop:enable Lint/AmbiguousBlockAssociation
 # rubocop:enable Lint/ParenthesesAsGroupedExpression
