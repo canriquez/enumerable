@@ -1,6 +1,6 @@
 # Advanced Building Blocks - Enumerables
 
-> This project adds my own version of enumerable methods onto the existing Enumerable module. In this project, I considered the full method definition included in [https://devdocs.io/ruby~2.6/enumerable](https://devdocs.io/ruby~2.6/enumerable), to replicate the same behaviour in all defined possible conditions.
+> This project adds my own version of enumerable methods onto the existing Enumerable module. In this project, I considered the full method definition included in [https://devdocs.io/ruby~2.6/enumerable](https://devdocs.io/ruby~2.6/enumerable), to replicate the same behavior in all defined possible conditions.
 
 Implemented methods are as follow:
 - #my_each
