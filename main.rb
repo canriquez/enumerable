@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module Enumerable
   # My each method definition
 
@@ -22,25 +23,19 @@ module Enumerable
     return to_enum :my_each unless block_given?
 
     arr = self
-    index = 0
-    while index <= arr.length - 1
-      yield arr[index], index
-      index += 1
+    0.upto(arr.length - 1) do |ii|
+      yield arr[ii], ii
     end
     arr
   end
 
   # my_select method definition
   def my_select
-    return to_enum :my_each unless block_given?
+    return to_enum :my_select unless block_given?
 
     arr = self
     back = []
-    index = 0
-    while index <= arr.length - 1
-      back << arr[index] if yield (arr[index])
-      index += 1
-    end
+    arr.my_each { |x| back << x if yield x }
     back
   end
 
@@ -60,22 +55,19 @@ module Enumerable
   # my_all? method definition
   def my_all?(param = '')
     arr = self
-    true_block_elements = 0
-    true_elements = 0
-    true_regexp = 0
-    true_pattern = 0
+    any_h = { t_b_e: 0, t_e: 0, t_rxp: 0, t_p: 0, who: false }
 
     0.upto(arr.length - 1) do |i|
       if param == ''
         if block_given?
-          true_block_elements += 1 if yield arr[i]
+          any_h[:t_b_e] += 1 if yield arr[i]
         elsif !arr[i].nil? && arr[i] != false
-          true_elements += 1
+          any_h[:t_e] += 1
         end
       end
-      true_regexp, true_pattern = param_reg(param, arr[i], true_regexp, true_pattern, false)
+      any_h[:t_rxp], any_h[:t_p] = param_reg(param, arr[i], any_h[:t_rxp], any_h[:t_p], false)
     end
-    any_element_true(arr.length, true_block_elements, true_elements, true_regexp, true_pattern)
+    any_element_true(arr.length, any_h[:t_b_e], any_h[:t_e], any_h[:t_rxp], any_h[:t_p])
 
     # if we reach this step and all elements are thruty, we exit true.
   end
@@ -96,39 +88,31 @@ module Enumerable
       end
       any_h[:true_block_elements] = no_block_count(any_h[:true_block_elements], block_given?, arr[i])
       any_h[:t_rxp], any_h[:true_pattern] = param_reg(param, arr[i], any_h[:t_rxp], any_h[:true_pattern], false)
-      # return true if (!arr[i].nil? || arr[i] != false) && !block_given?
-      # puts "matrix #{any_h}"
     end
     any_h[:true_block_elements] >= 1 || any_h[:t_rxp] >= 1 || any_h[:true_pattern] >= 1
   end
 
-  def any_element_true(arrlen, fbe, fel, freg, fpa)
+  def any_element_true(len, fbe, fel, freg, fpa)
     # method used inside my_none
-    a = fbe == arrlen || fel == arrlen
-    b = freg == arrlen || fpa == arrlen
-    a || b
+    fbe == len || fel == len || freg == len || fpa == len
   end
 
   # my_none? method definition
   def my_none?(param = '')
     arr = self
-    flase_block_elements = 0
-    false_elements = 0
-    false_regexp = 0
-    false_pattern = 0
+    any_h = { f_b_e: 0, f_e: 0, f_rxp: 0, f_p: 0, who: true }
 
     0.upto(arr.length - 1) do |i|
       if param == ''
         if block_given?
-          flase_block_elements += 1 unless yield arr[i]
+          any_h[:f_b_e] += 1 unless yield arr[i]
         elsif arr[i].nil? || arr[i] == false
-          false_elements += 1
+          any_h[:f_e] += 1
         end
       end
-
-      false_regexp, false_pattern = param_reg(param, arr[i], false_regexp, false_pattern, true)
+      any_h[:f_rxp], any_h[:f_p] = param_reg(param, arr[i], any_h[:f_rxp], any_h[:f_p], any_h[:who])
     end
-    any_element_true(arr.length, flase_block_elements, false_elements, false_regexp, false_pattern)
+    any_element_true(arr.length, any_h[:f_b_e], any_h[:f_e], any_h[:f_rxp], any_h[:f_p])
   end
 
   # my_map method definition (updated after point 10 of assigment)
@@ -147,7 +131,7 @@ module Enumerable
     back
   end
 
-  # my_map method definition
+  # my_count method definition
   def my_count(param = '')
     caller = self
     back = 0
@@ -186,6 +170,7 @@ module Enumerable
     total[-1]
   end
 end
+# rubocop:enable Metrics/ModuleLength
 
 def multiply_els(arr)
   arr.my_inject(1) { |product, x| x * product }
