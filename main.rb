@@ -49,15 +49,22 @@ module Enumerable
     # who is true for my_none method call
     return [t_reg, t_patt] if par.nil?
 
+    # puts "param : #{par}, arr_i : #{arr_i}, t_reg : #{t_reg}, t_patt : #{t_patt} who : #{who}"
+    # puts "is regexp? : #{par.class == Regexp}, is class? : #{par.class == Class}, parameter? : #{par.class}"
+    # puts "Conditions elements ( #{par.class != Regexp}, #{par.class != Class}, #{true} )"
+    # puts "conditions(par.class != Regexp, par.class != Class, true) : #{conditions(par.class != Regexp, par.class != Class, true)}"
     if par.class == Regexp && (!par.match(arr_i).nil? ^ who)
       t_reg += 1
 
     elsif conditions(par.class != Regexp, par.class == Class, true)
-      t_patt = inc_on_true(t_patt, arr_i.is_a?(Module.const_get(par.to_s)))
+     # print "Its a class: t_patt before : #{t_patt} --> "
+      t_patt = inc_on_true(t_patt, arr_i.is_a?(Module.const_get(par.to_s)) ^ who) # when no match and who is true ==> accumulate
+     # puts "t_patt after: #{t_patt}"
 
-    elsif conditions(par.class != Regexp, !par.class == Class, true)
-
-      t_patt = inc_on_true(t_patt, arr_i == par)
+    elsif conditions(par.class != Regexp, par.class != Class, true)
+     # print "no class, evaluate pattern : t_patt before : #{t_patt} -->"
+      t_patt = inc_on_true(t_patt, (arr_i == par) ^ who) # when no match and who is true ==> accumulate as it was called by my_none
+     # puts "t_patt after : #{t_patt}"
     end
     [t_reg, t_patt]
   end
@@ -83,8 +90,8 @@ module Enumerable
   end
 
   def no_block_count(element_check, block, arr_i, param)
-    # puts "Checking no_block. element_count : #{element_check}, no-block? : #{block}, arr_i : #{arr_i}, pram : #{param} }"
-    # puts "--> evaluation: #{(!arr_i.nil? || arr_i != false) && !block && param.nil?} "
+# puts "Checking no_block. element_count : #{element_check}, no-block? : #{block}, arr_i : #{arr_i}, pram : #{param} }"
+# puts "--> evaluation: #{(!arr_i.nil? || arr_i != false) && !block && param.nil?} "
     element_check += 1 if (!arr_i.nil? || arr_i != false) && !block && param.nil?
     element_check
   end
@@ -110,16 +117,16 @@ module Enumerable
   end
 
   # my_none? method definition
-  def my_none?(param = '')
+  def my_none?(param = nil)
     arr = self
     any_h = { f_b_e: 0, f_e: 0, f_rxp: 0, f_p: 0, who: true }
 
     0.upto(arr.length - 1) do |i|
-      if param == ''
+      if param.nil?
         if block_given?
-          any_h[:f_b_e] += 1 unless yield arr[i]
+          any_h[:f_b_e] += 1 unless yield arr[i] # counts false block's element
         elsif arr[i].nil? || arr[i] == false
-          any_h[:f_e] += 1
+          any_h[:f_e] += 1 # counts false element
         end
       end
       any_h[:f_rxp], any_h[:f_p] = param_reg(param, arr[i], any_h[:f_rxp], any_h[:f_p], any_h[:who])
@@ -160,6 +167,7 @@ module Enumerable
   end
 
   def conditions(con1, con2, con3)
+    # puts "hey I am here, con1: #{con1}, con2: #{con2}, con3: #{con3}"
     con1 && con2 && con3
   end
 
@@ -364,11 +372,25 @@ print '%w[ant bear cat].my_none?(/d/)  #==>: '
 p %w[ant bear cat].my_none?(/d/)
 puts ''
 
+puts 'my_none: Test 3.b'
+print '%w[ant bear cat].none?(5)     #==>: '
+p %w[ant bear cat].none?(5)
+print '%w[ant bear cat].my_none?(5)  #==>: '
+p %w[ant bear cat].my_none?(5)
+puts ''
+
 puts 'my_none: Test 4'
 print '[1, 3.14, 42].none?(Float)        #==>: '
 p [1, 3.14, 42].none?(Float)
 print '[1, 3.14, 42].my_none?(Float)     #==>: '
 p [1, 3.14, 42].my_none?(Float)
+puts ''
+
+puts 'my_none: Test 4.a'
+print '[1, 3, 42].none?(String)        #==>: '
+p [1, 3, 42].none?(String)
+print '[1, 3, 42].my_none?(String)     #==>: '
+p [1, 3, 42].my_none?(String)
 puts ''
 
 puts 'my_none: Test 5'
