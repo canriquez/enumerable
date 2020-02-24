@@ -39,17 +39,26 @@ module Enumerable
     back
   end
 
+  def inc_on_true(cont, cond)
+    cont += 1 if cond
+    cont
+  end
+
   def param_reg(par, arr_i, t_reg, t_patt, who)
     # who is false for my_all method call
     # who is true for my_none method call
-    return [t_reg, t_patt] unless !par.nil?
+    return [t_reg, t_patt] if par.nil?
 
     if par.class == Regexp && (!par.match(arr_i).nil? ^ who)
       t_reg += 1
-    elsif par.class != Regexp && par.class == Class
-      t_patt += 1 if arr_i.is_a?(Module.const_get(par.to_s))
-    else par.class != Regexp && !par.class == Class
-      t_patt += 1 if arr_i == par
+
+    elsif conditions(par.class != Regexp, par.class == Class, true)
+
+      t_patt = inc_on_true(t_patt, arr_i.is_a?(Module.const_get(par.to_s)))
+
+    elsif conditions(par.class != Regexp, !par.class == Class, true)
+
+      t_patt = inc_on_true(t_patt, arr_i == par)
     end
     [t_reg, t_patt]
   end
