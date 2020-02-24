@@ -42,23 +42,25 @@ module Enumerable
   def param_reg(par, arr_i, t_reg, t_patt, who)
     # who is false for my_all method call
     # who is true for my_none method call
-    return [t_reg, t_patt] unless par != ''
+    return [t_reg, t_patt] unless !par.nil?
 
     if par.class == Regexp && (!par.match(arr_i).nil? ^ who)
       t_reg += 1
-    elsif par.class != Regexp && arr_i.is_a?(Module.const_get(par.to_s))
-      t_patt += 1
+    elsif par.class != Regexp && par.class == Class
+      t_patt += 1 if arr_i.is_a?(Module.const_get(par.to_s))
+    else par.class != Regexp && !par.class == Class
+      t_patt += 1 if arr_i == par
     end
     [t_reg, t_patt]
   end
 
   # my_all? method definition
-  def my_all?(param = '')
+  def my_all?(param = nil)
     arr = self
     any_h = { t_b_e: 0, t_e: 0, t_rxp: 0, t_p: 0, who: false }
 
     0.upto(arr.length - 1) do |i|
-      if param == ''
+      if param.nil?
         if block_given?
           any_h[:t_b_e] += 1 if yield arr[i]
         elsif !arr[i].nil? && arr[i] != false
@@ -253,6 +255,13 @@ print '[1, "b", 3.14].all?(Numeric)     #==>: '
 p [1, 'b', 3.14].all?(Numeric)
 print '[1, "b", 3.14].my_all?(Numeric)  #==>: '
 p [1, 'b', 3.14].my_all?(Numeric)
+puts ''
+
+puts 'my_all_full: Test 4.a'
+print '[1, "b", 3.14].all?(1)     #==>: '
+p [1, 'b', 3.14].all?(1)
+print '[1, "b", 3.14].my_all?(1)  #==>: '
+p [1, 'b', 3.14].my_all?(1)
 puts ''
 
 puts 'my_all_full: Test 5'
