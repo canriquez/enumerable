@@ -53,7 +53,6 @@ module Enumerable
       t_reg += 1
 
     elsif conditions(par.class != Regexp, par.class == Class, true)
-
       t_patt = inc_on_true(t_patt, arr_i.is_a?(Module.const_get(par.to_s)))
 
     elsif conditions(par.class != Regexp, !par.class == Class, true)
@@ -83,13 +82,15 @@ module Enumerable
     # if we reach this step and all elements are thruty, we exit true.
   end
 
-  def no_block_count(element_check, block, arr_i)
-    element_check += 1 if (!arr_i.nil? || arr_i != false) && !block
+  def no_block_count(element_check, block, arr_i, param)
+    # puts "Checking no_block. element_count : #{element_check}, no-block? : #{block}, arr_i : #{arr_i}, pram : #{param} }"
+    # puts "--> evaluation: #{(!arr_i.nil? || arr_i != false) && !block && param.nil?} "
+    element_check += 1 if (!arr_i.nil? || arr_i != false) && !block && param.nil?
     element_check
   end
 
   # my_any? method definition
-  def my_any?(param = String)
+  def my_any?(param = nil)
     arr = self
     any_h = { true_block_elements: 0, true_elements: 0, t_rxp: 0, true_pattern: 0, who: false }
 
@@ -97,8 +98,8 @@ module Enumerable
       if block_given?
         any_h[:true_block_elements] += 1 if yield arr[i]
       end
-      any_h[:true_block_elements] = no_block_count(any_h[:true_block_elements], block_given?, arr[i])
       any_h[:t_rxp], any_h[:true_pattern] = param_reg(param, arr[i], any_h[:t_rxp], any_h[:true_pattern], false)
+      any_h[:true_block_elements] = no_block_count(any_h[:true_block_elements], block_given?, arr[i], param)
     end
     any_h[:true_block_elements] >= 1 || any_h[:t_rxp] >= 1 || any_h[:true_pattern] >= 1
   end
@@ -315,6 +316,13 @@ print '[1, "b", 3.14].any?(Numeric)     #==>: '
 p [1, 'b', 3.14].any?(Numeric)
 print '[1, "b", 3.14].my_any?(Numeric)  #==>: '
 p [1, 'b', 3.14].my_any?(Numeric)
+puts ''
+
+puts 'my_any_full: Test 4.b'
+print '%w[hoho hi cat].any?(Integer)     #==>: '
+p %w[hoho hi cat].any?(Integer)
+print '%w[hoho hi cat].any?(Integer)  #==>: '
+p %w[hoho hi cat].any?(Integer)
 puts ''
 
 puts 'my_any_full: Test 5'
