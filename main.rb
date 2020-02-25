@@ -184,7 +184,18 @@ module Enumerable
       elsif conditions(i.zero?, block_given?, !value.is_a?(Numeric))
         total[0] = value.clear
       end
-      total[i + 1] = yield total[i], value
+
+      if !param.nil? && param.my_any?(Symbol)
+        total[0] = 0 if !param.my_any?(Numeric) && (param[0] == :+ || param[0] == :- )
+        total[0] = 1 if !param.my_any?(Numeric) && !(param[0] == :+ || param[0] == :-)
+        total[0] = param[0] if param.my_any?(Numeric) 
+        param[0] = param[1] if param.my_any?(Numeric) 
+
+        total[i+1] = total[i].send(param[0],value)
+      else
+        total[i + 1] = yield total[i], value
+      end
+
       i += 1
     end
     total[-1]
@@ -513,6 +524,40 @@ puts ''
 puts 'my_map: Test using proc & block - Executing Proc as priority'
 print '[4, 6, 7.0, 9].my_map_proc(my_proc) {|arg1| arg1 / 2.0 > 3.0 } #==>: '
 p [4, 6, 7.0, 9].my_map(my_proc) { |arg1| arg1 / 2.0 > 3.0 }
+
+
+
+puts '==============  My Inject_proc =============='
+
+print '[10,20,30,40,50].inject(:+) #==>: '
+p [10,20,30,40,50].inject(:+)
+print '[1,2,3,4,5].my_inject(:+) #==>: '
+p [10,20,30,40,50].my_inject(:+)
+puts ''
+
+print '[1,2,3,4,5].inject(:*) #==>: '
+p [1,2,3,4,5].inject(:*)
+print '[1,2,3,4,5].my_inject(:*) #==>: '
+p [1,2,3,4,5].my_inject(:*)
+puts ''
+
+print '[1,2,3,4,5].inject(:/) #==>: '
+p [1,2,3,4,5].inject(:/)
+print '[1,2,3,4,5].my_inject(:/) #==>: '
+p [1,2,3,4,5].my_inject(:/)
+puts ''
+
+print '[10,20,30,40,50].inject(5,:+) #==>: '
+p [10,20,30,40,50].inject(5,:+)
+print '[1,2,3,4,5].my_inject(5,:+) #==>: '
+p [10,20,30,40,50].my_inject(5,:+)
+puts ''
+
+print '[1,2,3,4,5].inject(5,:*) #==>: '
+p [1,2,3,4,5].inject(5,:*)
+print '[1,2,3,4,5].my_inject(5,:*) #==>: '
+p [1,2,3,4,5].my_inject(5,:*)
+puts ''
 
 # rubocop:enable Lint/AmbiguousBlockAssociation
 # rubocop:enable Lint/ParenthesesAsGroupedExpression
