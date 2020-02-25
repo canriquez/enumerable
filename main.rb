@@ -49,22 +49,14 @@ module Enumerable
     # who is true for my_none method call
     return [t_reg, t_patt] if par.nil?
 
-    # puts "param : #{par}, arr_i : #{arr_i}, t_reg : #{t_reg}, t_patt : #{t_patt} who : #{who}"
-    # puts "is regexp? : #{par.class == Regexp}, is class? : #{par.class == Class}, parameter? : #{par.class}"
-    # puts "Conditions elements ( #{par.class != Regexp}, #{par.class != Class}, #{true} )"
-    # puts "conditions(par.class != Regexp, par.class != Class, true) : #{conditions(par.class != Regexp, par.class != Class, true)}"
     if par.class == Regexp && (!par.match(arr_i).nil? ^ who)
       t_reg += 1
 
     elsif conditions(par.class != Regexp, par.class == Class, true)
-     # print "Its a class: t_patt before : #{t_patt} --> "
-      t_patt = inc_on_true(t_patt, arr_i.is_a?(Module.const_get(par.to_s)) ^ who) # when no match and who is true ==> accumulate
-     # puts "t_patt after: #{t_patt}"
+      t_patt = inc_on_true(t_patt, arr_i.is_a?(Module.const_get(par.to_s)) ^ who)
 
     elsif conditions(par.class != Regexp, par.class != Class, true)
-     # print "no class, evaluate pattern : t_patt before : #{t_patt} -->"
-      t_patt = inc_on_true(t_patt, (arr_i == par) ^ who) # when no match and who is true ==> accumulate as it was called by my_none
-     # puts "t_patt after : #{t_patt}"
+      t_patt = inc_on_true(t_patt, (arr_i == par) ^ who)
     end
     [t_reg, t_patt]
   end
@@ -90,8 +82,6 @@ module Enumerable
   end
 
   def no_block_count(element_check, block, arr_i, param)
-# puts "Checking no_block. element_count : #{element_check}, no-block? : #{block}, arr_i : #{arr_i}, pram : #{param} }"
-# puts "--> evaluation: #{(!arr_i.nil? || arr_i != false) && !block && param.nil?} "
     element_check += 1 if (!arr_i.nil? || arr_i != false) && !block && param.nil?
     element_check
   end
@@ -171,27 +161,38 @@ module Enumerable
     con1 && con2 && con3
   end
 
+  def inject_total_param(total = [], param = [])
+    if !param.nil? && param.my_any?(Symbol)
+      total[0] = 0 if !param.my_any?(Numeric) && (param[0] == :+ || param[0] == :-)
+      total[0] = 1 if !param.my_any?(Numeric) && !(param[0] == :+ || param[0] == :-)
+      total[0] = param[0] if param.my_any?(Numeric)
+      param[0] = param[1] if param.my_any?(Numeric)
+    end
+    [total, param]
+  end
+
+  def zero_value_inject(total, iii, param, block, value)
+    if conditions(iii.zero?, !param.nil?, param[0].is_a?(Numeric))
+      total[0] = param[0]
+    elsif conditions(iii.zero?, block, value.is_a?(Numeric))
+      total[0] = value - value
+    elsif conditions(iii.zero?, block, !value.is_a?(Numeric))
+      total[0] = value.clear
+    end
+    total
+  end
+
   # my_inject method definition
   def my_inject(*param)
     caller = self
     i = 0
     total = []
     caller.my_each do |value|
-      if conditions(i.zero?, !param.nil?, param[0].is_a?(Numeric))
-        total[0] = param[0]
-      elsif conditions(i.zero?, block_given?, value.is_a?(Numeric))
-        total[0] = value - value
-      elsif conditions(i.zero?, block_given?, !value.is_a?(Numeric))
-        total[0] = value.clear
-      end
+      total = zero_value_inject(total, i, param, block_given?, value)
 
       if !param.nil? && param.my_any?(Symbol)
-        total[0] = 0 if !param.my_any?(Numeric) && (param[0] == :+ || param[0] == :- )
-        total[0] = 1 if !param.my_any?(Numeric) && !(param[0] == :+ || param[0] == :-)
-        total[0] = param[0] if param.my_any?(Numeric) 
-        param[0] = param[1] if param.my_any?(Numeric) 
-
-        total[i+1] = total[i].send(param[0],value)
+        total, param = inject_total_param(total, param)
+        total[i + 1] = total[i].send(param[0], value)
       else
         total[i + 1] = yield total[i], value
       end
@@ -525,38 +526,36 @@ puts 'my_map: Test using proc & block - Executing Proc as priority'
 print '[4, 6, 7.0, 9].my_map_proc(my_proc) {|arg1| arg1 / 2.0 > 3.0 } #==>: '
 p [4, 6, 7.0, 9].my_map(my_proc) { |arg1| arg1 / 2.0 > 3.0 }
 
-
-
 puts '==============  My Inject_proc =============='
 
-print '[10,20,30,40,50].inject(:+) #==>: '
-p [10,20,30,40,50].inject(:+)
-print '[1,2,3,4,5].my_inject(:+) #==>: '
-p [10,20,30,40,50].my_inject(:+)
+print '[10, 20, 30, 40, 50].inject(:+) #==>: '
+p [10, 20, 30, 40, 50].inject(:+)
+print '[10, 20, 30, 40, 50].my_inject(:+) #==>: '
+p [10, 20, 30, 40, 50].my_inject(:+)
 puts ''
 
-print '[1,2,3,4,5].inject(:*) #==>: '
-p [1,2,3,4,5].inject(:*)
-print '[1,2,3,4,5].my_inject(:*) #==>: '
-p [1,2,3,4,5].my_inject(:*)
+print '[1, 2, 3, 4, 5].inject(:*) #==>: '
+p [1, 2, 3, 4, 5].inject(:*)
+print '[1, 2, 3, 4, 5].my_inject(:*) #==>: '
+p [1, 2, 3, 4, 5].my_inject(:*)
 puts ''
 
-print '[1,2,3,4,5].inject(:/) #==>: '
-p [1,2,3,4,5].inject(:/)
-print '[1,2,3,4,5].my_inject(:/) #==>: '
-p [1,2,3,4,5].my_inject(:/)
+print '[1, 2, 3, 4, 5].inject(:/) #==>: '
+p [1, 2, 3, 4, 5].inject(:/)
+print '[1, 2, 3, 4, 5].my_inject(:/) #==>: '
+p [1, 2, 3, 4, 5].my_inject(:/)
 puts ''
 
-print '[10,20,30,40,50].inject(5,:+) #==>: '
-p [10,20,30,40,50].inject(5,:+)
-print '[1,2,3,4,5].my_inject(5,:+) #==>: '
-p [10,20,30,40,50].my_inject(5,:+)
+print '[10, 20, 30, 40, 50].inject(5,:+) #==>: '
+p [10, 20, 30, 40, 50].inject(5, :+)
+print '[10, 20, 30, 40, 50].my_inject(5,:+) #==>: '
+p [10, 20, 30, 40, 50].my_inject(5, :+)
 puts ''
 
-print '[1,2,3,4,5].inject(5,:*) #==>: '
-p [1,2,3,4,5].inject(5,:*)
-print '[1,2,3,4,5].my_inject(5,:*) #==>: '
-p [1,2,3,4,5].my_inject(5,:*)
+print '[1, 2, 3, 4, 5].inject(5,:*) #==>: '
+p [1, 2, 3, 4, 5].inject(5, :*)
+print '[1, 2, 3, 4, 5].my_inject(5,:*) #==>: '
+p [1, 2, 3, 4, 5].my_inject(5, :*)
 puts ''
 
 # rubocop:enable Lint/AmbiguousBlockAssociation
