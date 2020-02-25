@@ -161,12 +161,20 @@ module Enumerable
     con1 && con2 && con3
   end
 
+  def assign_if_true(total, value, eval1, eval2)
+    if eval1 && eval2
+      value
+    else
+      total
+    end
+  end
+
   def inject_total_param(total = [], param = [])
     if !param.nil? && param.my_any?(Symbol)
-      total[0] = 0 if !param.my_any?(Numeric) && (param[0] == :+ || param[0] == :-)
-      total[0] = 1 if !param.my_any?(Numeric) && !(param[0] == :+ || param[0] == :-)
-      total[0] = param[0] if param.my_any?(Numeric)
-      param[0] = param[1] if param.my_any?(Numeric)
+      total[0] = assign_if_true(total[0], 0, !param.my_any?(Numeric), param[0] == :+ || param[0] == :-)
+      total[0] = assign_if_true(total[0], 1, !param.my_any?(Numeric), !(param[0] == :+ || param[0] == :-))
+      total[0] = assign_if_true(total[0], param[0], param.my_any?(Numeric), true)
+      param[0] = assign_if_true(param[0], param[1], param.my_any?(Numeric), true)
     end
     [total, param]
   end
