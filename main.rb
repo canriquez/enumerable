@@ -82,7 +82,7 @@ module Enumerable
   end
 
   def no_block_count(element_check, block, arr_i, param)
-    element_check += 1 if (!arr_i.nil? || arr_i != false) && !block && param.nil?
+    element_check += 1 if (!arr_i.nil? && arr_i != false) && !block && param.nil?
     element_check
   end
 
@@ -358,6 +358,13 @@ print '[nil, true, 99].any?        #==>: '
 p [nil, true, 99].any?
 print '[nil, true, 99].my_any?     #==>: '
 p [nil, true, 99].my_any?
+puts ''
+
+puts 'my_any_full: Test 5.a'
+print '[nil, false, nil, false].any?        #==>: '
+p [nil, false, nil, false].any?
+print '[nil, false, nil, false].my_any?     #==>: '
+p [nil, false, nil, false].my_any?
 puts ''
 
 puts 'my_any_full: Test 6'
