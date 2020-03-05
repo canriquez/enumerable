@@ -20,7 +20,7 @@ module Enumerable
 
   # my_each_with_index method definition
   def my_each_with_index
-    return to_enum :my_each unless block_given?
+    return to_enum :my_each_with_index unless block_given?
 
     arr = self
     0.upto(arr.length - 1) do |ii|
